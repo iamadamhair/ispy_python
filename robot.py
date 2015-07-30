@@ -69,6 +69,9 @@ class Robot(ALModule):
 
 		self.asr.setVocabulary([j for i in self.yes_no_vocab.values() for j in i], False)
 
+		# Custom segmentationation module
+		self.segmentation = ALProxy("Segmentation", address, port)
+
 		# --- text to speech ---
 		self.tts = ALProxy("ALTextToSpeech", address, port)
 
@@ -85,7 +88,7 @@ class Robot(ALModule):
 		# --- face tracking ---
 		self.track = ALProxy("ALFaceTracker", address, port)
 
-		face_tracker.setWholeBodyOn(False)
+		self.track.setWholeBodyOn(False)
 
 		# --- gaze analysis ---
 		self.gaze = ALProxy("ALGazeAnalysis", address, port)
@@ -342,6 +345,10 @@ class Robot(ALModule):
 			time.sleep(0.2)
 
 		self.sound.unsubscribe("sound_detection_client")
+
+	def count_objects(self):
+		objects = self.segmentation.look_for_objects()
+		return len(objects)
 
 #------------------------Main------------------------#
 if __name__ == "__main__":
